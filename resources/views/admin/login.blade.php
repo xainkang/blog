@@ -23,7 +23,7 @@
 <div class="login layui-anim layui-anim-up">
     <div class="message">后台管理登录</div>
     <div id="darkbannerwrap"></div>
-    @if(count($errors)>0)
+    @if(count((array)$errors)>0)
         <div class="alert alert-danger">
             <ul>
                 @if(is_object($errors))

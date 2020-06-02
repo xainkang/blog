@@ -11,17 +11,23 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('admin/jiami','Admin\LoginController@jiami');
 //后台登录路由
-Route::get('admin/login','Admin\LoginController@login');
+Route::group(['prefix'=>'admin','namespace'=>'Admin'],function (){
+    Route::get('login','LoginController@login');
 //验证码路由
-
-Route::get('admin/code','Admin\LoginController@code');
-Route::get('/code/captcha/{tmp}','Admin\LoginController@capcha');
+    Route::get('code','LoginController@code');
 //表单验证
-Route::post('admin/dologin','Admin\LoginController@doLogin');
+    Route::post('dologin','LoginController@doLogin');
 //加密
-Route::get('admin/jiami','Admin\LoginController@jiami');
-Route::get('layouts/admin','Admin\LoginController@admin');
+    Route::get('jiami','LoginController@jiami');
+});
+
+Route::group(['prefix'=>'admin','namespace'=>'Admin','middleware'=>'isLogin'],function (){
+    Route::get('index','LoginController@index');
+    Route::get('welcome','LoginController@welcome');
+    Route::get('logout','LoginController@logout');
+    Route::get('user/list','LoginController@list');
+});
+
+

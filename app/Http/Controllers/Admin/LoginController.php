@@ -44,9 +44,8 @@ class LoginController extends Controller
            'password.alpha_dash' => '密码必须是数字字母下划线',
            'code.required' => '验证码必须输入',
            'code.between' => '验证码必须在4-18位之间'
-
-
        ];
+
        $validator =Validator::make($input,$rule,$msg);
        if($validator->fails()){
            return redirect('admin/login')
@@ -60,8 +59,8 @@ class LoginController extends Controller
            return redirect('admin/login')->with('$errors','验证码错误');
        }
        $user=User::where('username',$input['username'])->first();
-
-       if (!$user){
+//        dd($user);
+       if ($user == null){
            return redirect('admin/login')->with('$errors','用户名错误');
        }
 
@@ -74,7 +73,7 @@ class LoginController extends Controller
        session()->put('user',$user);
 //       5.跳转到后台首页
 
-       return redirect('layouts/admin');
+       return redirect('admin/index');
 
 
    }
@@ -104,9 +103,27 @@ class LoginController extends Controller
         }
     }
     //后台页面
-    public function admin(){
+    public function index(){
+        return view('admin.index');
+    }
+    public  function  welcome(){
+        return view('admin.welcome');
+    }
+    public  function  admin(){
         return view('layouts.admin');
     }
+    //退出登录
+    public function logout(){
+        //清除登录信息
+        session()->flush();
+       return redirect('admin/login');
+    }
+
+    //用户列表
+    public function list(){
+        return view('admin/user/list');
+    }
+
 
 }
 
