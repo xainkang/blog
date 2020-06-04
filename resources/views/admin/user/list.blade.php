@@ -53,24 +53,19 @@
                             </th>
                             <th>ID</th>
                             <th>登录名</th>
-                            <th>手机</th>
                             <th>邮箱</th>
-                            <th>角色</th>
-                            <th>加入时间</th>
                             <th>状态</th>
                             <th>操作</th>
                         </thead>
                         <tbody>
+                        @foreach($user as $v)
                         <tr>
                             <td>
                                 <input type="checkbox" name=""  lay-skin="primary">
                             </td>
-                            <td>1</td>
-                            <td>admin</td>
-                            <td>18925139194</td>
-                            <td>113664000@qq.com</td>
-                            <td>超级管理员</td>
-                            <td>2017-01-01 11:11:42</td>
+                            <td>{{$v->id}}</td>
+                            <td>{{$v->username}}</td>
+                            <td>{{$v->email}}</td>
                             <td class="td-status">
                                 <span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>
                             <td class="td-manage">
@@ -80,11 +75,12 @@
                                 <a title="编辑"  onclick="xadmin.open('编辑','admin-edit.html')" href="javascript:;">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
-                                <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
+                                <a title="删除" onclick="member_del(this,'{{$v->id}}')" href="javascript:;">
                                     <i class="layui-icon">&#xe640;</i>
                                 </a>
                             </td>
                         </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>

@@ -121,7 +121,9 @@ class LoginController extends Controller
 
     //用户列表
     public function list(){
-        return view('admin/user/list');
+        $user=User::get();
+        return view('admin/user/list',compact('user'));
+
     }
 
 
