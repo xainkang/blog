@@ -15,9 +15,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin/user/list');
+//        $input=$request->all();
+//        dd($input);
+//        数据查询的方法
+        $user=\App\Model\User::orderBy('id','asc')
+            ->where (function ($query) use($request){
+               $username=$request->input('username');
+                $email=$request->input('email');
+               if (!empty($username)){
+                   $query->where('username','like','%'.$username.'%');
+               }
+                if (!empty($email)){
+                    $query->where('email','like','%'.$email.'%');
+                }
+            })
+        ->paginate($request->input('num')?$request->input('num'):3);
+        return view('admin/user/list',compact('user','request'));
     }
 
     /**
@@ -90,7 +105,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        //返回修改页面
+       $user= \App\Model\User::find($id);
+        return view('admin.user.edit',compact('user'));
     }
 
     /**
@@ -103,6 +120,25 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $input=$request->all();
+        $user=\App\Model\User::find($id);
+        $res=$user->update(['username'=>$input['username']]);
+//    根据修改是否成功，跳转到对应的页面
+        if ($res){
+            $data=[
+                'status'=>0,
+                'message'=>'修改成功'
+            ];
+        }else{
+            $data=[
+                'status'=>1,
+                'message'=>'修改失败'
+            ];
+        }
+        return $data;
+
+
+
     }
 
     /**

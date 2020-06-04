@@ -9,7 +9,7 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('用户列表(静态表格)','{{url('admin/user/list')}}')">
+                        <a onclick="xadmin.add_tab('用户列表(静态表格)','{{url('admin/user')}}')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>用户列表(静态表格)</cite></a>
                     </li>

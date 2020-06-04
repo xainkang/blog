@@ -25,15 +25,21 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body ">
-                    <form class="layui-form layui-col-space5">
-                        <div class="layui-inline layui-show-xs-block">
-                            <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
+                    <form class="layui-form layui-col-space5" method="get" action="{{url('admin/user')}}">
+                        <div class="layui-inline layui-show-xs-inline">
+                            <select name="num" lay-verify="required">
+                                <option value=""></option>
+                                <option value="3" @if($request->input('num')==3)  selected @endif>3</option>
+                                <option value="4" @if($request->input('num')==4)  selected @endif>4</option>
+                                <option value="5" @if($request->input('num')==5)  selected @endif>5</option>
+                                <option value="6" @if($request->input('num')==6)  selected @endif>6</option>
+                            </select>
                         </div>
                         <div class="layui-inline layui-show-xs-block">
-                            <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
+                            <input type="text" name="email" value="{{$request->input('email')}}" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
-                            <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                            <input type="text" name="username" value="{{$request->input('username')}}" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
@@ -72,10 +78,10 @@
                                 <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
                                     <i class="layui-icon">&#xe601;</i>
                                 </a>
-                                <a title="编辑"  onclick="xadmin.open('编辑','admin-edit.html')" href="javascript:;">
+                                <a title="编辑"  onclick="xadmin.open('编辑','{{url('admin/user/'.$v->id.'/edit')}}',600,400)" href="javascript:;">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
-                                <a title="删除" onclick="member_del(this,'{{$v->id}}')" href="javascript:;">
+                                <a title="删除" onclick="member_del(this,'{{$v->id}}')"  href="javascript:;">
                                     <i class="layui-icon">&#xe640;</i>
                                 </a>
                             </td>
@@ -86,7 +92,7 @@
                 </div>
                 <div class="layui-card-body ">
                     <div class="page" style="flex: content">
-                        {!! $user->render() !!}
+                        {!! $user->appends($request->all())->render() !!}
 {{--                        <div>--}}
 {{--                            <a class="prev" href="">&lt;&lt;</a>--}}
 {{--                            <a class="num" href="">1</a>--}}
@@ -123,7 +129,6 @@
         layer.confirm('确认要停用吗？',function(index){
 
             if($(obj).attr('title')=='启用'){
-
                 //发异步把用户状态进行更改
                 $(obj).attr('title','停用')
                 $(obj).find('i').html('&#xe62f;');
