@@ -42,7 +42,7 @@
                 </div>
                 <div class="layui-card-header">
                     <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','./admin-add.html',600,400)"><i class="layui-icon"></i>添加</button>
+                    <button class="layui-btn" onclick="xadmin.open('添加用户','{{url('admin/user/create')}}',600,400)"><i class="layui-icon"></i>添加</button>
                 </div>
                 <div class="layui-card-body ">
                     <table class="layui-table layui-form">
@@ -85,15 +85,16 @@
                     </table>
                 </div>
                 <div class="layui-card-body ">
-                    <div class="page">
-                        <div>
-                            <a class="prev" href="">&lt;&lt;</a>
-                            <a class="num" href="">1</a>
-                            <span class="current">2</span>
-                            <a class="num" href="">3</a>
-                            <a class="num" href="">489</a>
-                            <a class="next" href="">&gt;&gt;</a>
-                        </div>
+                    <div class="page" style="flex: content">
+                        {!! $user->render() !!}
+{{--                        <div>--}}
+{{--                            <a class="prev" href="">&lt;&lt;</a>--}}
+{{--                            <a class="num" href="">1</a>--}}
+{{--                            <span class="current">2</span>--}}
+{{--                            <a class="num" href="">3</a>--}}
+{{--                            <a class="num" href="">489</a>--}}
+{{--                            <a class="next" href="">&gt;&gt;</a>--}}
+{{--                        </div>--}}
                     </div>
                 </div>
             </div>

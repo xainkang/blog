@@ -121,7 +121,8 @@ class LoginController extends Controller
 
     //用户列表
     public function list(){
-        $user=User::get();
+        $user=User::paginate(3);
+
         return view('admin/user/list',compact('user'));
 
     }

@@ -30,7 +30,7 @@ class UserController extends Controller
         //
 
 
-        return view('admin.user.add');
+        return view('admin.user.create');
     }
 
     /**
