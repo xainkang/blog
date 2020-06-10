@@ -25,21 +25,10 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body ">
-                    <form class="layui-form layui-col-space5" method="get" action="{{url('admin/user')}}">
-                        <div class="layui-inline layui-show-xs-inline">
-                            <select name="num" lay-verify="required">
-                                <option value=""></option>
-                                <option value="3" @if($request->input('num')==3)  selected @endif>3</option>
-                                <option value="4" @if($request->input('num')==4)  selected @endif>4</option>
-                                <option value="5" @if($request->input('num')==5)  selected @endif>5</option>
-                                <option value="6" @if($request->input('num')==6)  selected @endif>6</option>
-                            </select>
-                        </div>
+                    <form class="layui-form layui-col-space5" method="get" action="{{url('admin/role/create')}}">
+
                         <div class="layui-inline layui-show-xs-block">
-                            <input type="text" name="email" value="{{$request->input('email')}}" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-show-xs-block">
-                            <input type="text" name="username" value="{{$request->input('username')}}" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                            <input type="text" name="username"  placeholder="请输角色名" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
@@ -48,7 +37,7 @@
                 </div>
                 <div class="layui-card-header">
                     <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','{{url('admin/user/create')}}',600,400)"><i class="layui-icon"></i>添加</button>
+                    <button class="layui-btn" onclick="xadmin.open('添加角色','{{url('admin/role/create')}}',600,400)"><i class="layui-icon"></i>添加</button>
                 </div>
                 <div class="layui-card-body ">
                     <table class="layui-table layui-form">
@@ -58,28 +47,27 @@
                                 <input type="checkbox" name=""  lay-skin="primary" >
                             </th>
                             <th>ID</th>
-                            <th>登录名</th>
-                            <th>邮箱</th>
+                            <th>角色名</th>
                             <th>状态</th>
                             <th>操作</th>
                         </thead>
                         <tbody>
-                        @foreach($user as $v)
+                        @foreach($role as $v)
                         <tr>
                             <td>
                                 <input type="checkbox" name=""  lay-skin="primary" data-id="{{$v->id}}">
                                 <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id="{{$v->id}}"><i class="layui-icon layui-icon-ok"></i></div>
                             </td>
                             <td>{{$v->id}}</td>
-                            <td>{{$v->username}}</td>
-                            <td>{{$v->email}}</td>
+                            <td>{{$v->role_name}}</td>
+
                             <td class="td-status">
                                 <span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>
                             <td class="td-manage">
-                                <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
-                                    <i class="layui-icon">&#xe601;</i>
+                                <a onclick="xadmin.open('授权','{{url('admin/role/auth/'.$v->id)}}',600,400)" href="javascript:;"  title="启用">
+                                    <i class="layui-icon">&#xe612;</i>
                                 </a>
-                                <a title="编辑"  onclick="xadmin.open('编辑','{{url('admin/user/'.$v->id.'/edit')}}',600,400)" href="javascript:;">
+                                <a title="编辑"  onclick="xadmin.open('编辑','{{url('admin/role/'.$v->id.'/edit')}}',600,400)" href="javascript:;">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
                                 <a title="删除" onclick="member_del(this,'{{$v->id}}')"  href="javascript:;">
@@ -91,19 +79,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="layui-card-body ">
-                    <div class="page" style="flex: content">
-                        {!! $user->appends($request->all())->render() !!}
-{{--                        <div>--}}
-{{--                            <a class="prev" href="">&lt;&lt;</a>--}}
-{{--                            <a class="num" href="">1</a>--}}
-{{--                            <span class="current">2</span>--}}
-{{--                            <a class="num" href="">3</a>--}}
-{{--                            <a class="num" href="">489</a>--}}
-{{--                            <a class="next" href="">&gt;&gt;</a>--}}
-{{--                        </div>--}}
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -147,51 +123,19 @@
 
         });
     }
-
     /*用户-删除*/
     function member_del(obj,id){
         layer.confirm('确认要删除吗？',function(index){
-            $.post('/admin/user/'+id,{"_method":"delete","_token":"{{csrf_token()}}"},function(data){
-                // console.log(data);
-
-                    // 弹层提示添加成功，并刷新父页面
-                    // console.log(data);
-                    if(data.status == 0){
-                        $(obj).parents("tr").remove();
-                        layer.alert(data.message,{icon:6,time:1000});
-                    }else{
-                        layer.alert(data.message,{icon:5,time:1000});
-                    }
-                });
-
-
-            // //发异步删除数据
-            // $(obj).parents("tr").remove();
-            // layer.msg('已删除!',{icon:1,time:1000});
-        });
-    }
-
-
-
-    function delAll (argument) {
-        var ids=[];
-        $(".layui-form-checked").each(function (i,v) {
-            var u=$(v).attr('data-id');
-            ids.push(u);
-        })
-        layer.confirm('确认要删除吗？',function(index){
-            $.get('/admin/user/del',{'ids':ids},function (data) {
+            $.post('/admin/role/'+id,{"_method":"delete","_token":"{{csrf_token()}}"},function(data){
+                // 弹层提示添加成功，并刷新父页面
+                console.log(data);
                 if(data.status == 0){
-                    $(".layui-form-checked").not('.header').parents('tr').remove();
+                    $(obj).parents("tr").remove();
                     layer.alert(data.message,{icon:6,time:1000});
                 }else{
                     layer.alert(data.message,{icon:5,time:1000});
                 }
-            })
-            //捉到所有被选中的，发异步进行删除
-
-            // layer.msg('删除成功', {icon: 1});
-            // $(".layui-form-checked").not('.header').parents('tr').remove();
+            });
         });
     }
 </script>

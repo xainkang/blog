@@ -14,12 +14,12 @@
                             <cite>用户列表(静态表格)</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('添加用户','admin/index')">
+                        <a onclick="xadmin.add_tab('角色授权','{{url('admin/role')}}')">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>添加用户</cite></a>
+                            <cite>角色授权</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('会员列表(动态表格)','member-list1.html',true)">
+                        <a onclick="xadmin.add_tab('会员列表(动态表格)','{{url('admin/role')}}',true)">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>会员列表(动态表格)</cite></a>
                     </li>

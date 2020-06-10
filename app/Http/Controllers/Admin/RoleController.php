@@ -2,37 +2,60 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Model\Permission;
+use App\Model\Role;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
-
-class UserController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-//        $input=$request->all();
+    //权限列表处理
+    public function doauth(Request $request){
+        $input=$request->except('_token');
 //        dd($input);
-//        数据查询的方法
-        $user=\App\Model\User::orderBy('id','asc')
-            ->where (function ($query) use($request){
-               $username=$request->input('username');
-                $email=$request->input('email');
-               if (!empty($username)){
-                   $query->where('username','like','%'.$username.'%');
-               }
-                if (!empty($email)){
-                    $query->where('email','like','%'.$email.'%');
-                }
-            })
-        ->paginate($request->input('num')?$request->input('num'):3);
-        return view('admin/user/list',compact('user','request'));
+        //删除原来的role_permissiom表
+        \DB::table('role_permission')->where('role_id',$input['role_id'])->delete();
+        //重新添加role_permission表
+        if (!empty($input['permission_id'])){
+            foreach ($input['permission_id'] as $v){
+                \DB::table('role_permission')->insert(['role_id'=>$input['role_id'],'permission_id'=>$v]);
+            }
+        }
+
+return redirect('admin/role');
+
+
+    }
+
+
+    //获取授权页面
+    public function auth($id){
+        //获取当前角色
+        $role=Role::find($id);
+//        获取所有的权限列表
+        $permis=Permission::get();
+        //获取当前角色拥有的权限
+        $own_pers=$role->permission;
+        $own_per= [];
+        foreach ($own_pers as $v){
+            $own_per[] = $v->id;
+        }
+//        dd($own_per);
+        return view('admin.role.auth',compact('role','permis','own_per'));
+
+    }
+    public function index()
+    {
+        //
+        $role=Role::get();
+        return view('admin.role.list',compact('role'));
     }
 
     /**
@@ -43,9 +66,7 @@ class UserController extends Controller
     public function create()
     {
         //
-
-
-        return view('admin.user.create');
+        return view('admin.role.create');
     }
 
     /**
@@ -56,14 +77,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //接受前台表单戴数据
-        $input=$request->all();
-        $username=$input['username'];
-        $password=Crypt::encrypt($input['pass']);
-//        $phone=$input['phone'];
-        $email=$input['email'];
-//        $aa=()
-        $res=\App\Model\User::create(['username'=>$username,'password'=>$password,'email'=>$email]);
+        //
+        $res=Role::create(['role_name'=>$request['role_name']]);
         if ($res){
             $data=[
                 'status'=>0,
@@ -76,22 +91,17 @@ class UserController extends Controller
             ];
         }
         return $data;
-        //进行表单验证
-        //添加到数据库
-//        根据添加是否成功，返回json格式数据
     }
 
     /**
-     * 查询所有的数据
+     * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-
-
-
+        //
     }
 
     /**
@@ -100,15 +110,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($role_id)
     {
-        //返回修改页面
-       $user= \App\Model\User::find($id);
-        return view('admin.user.edit',compact('user'));
+        //
+
+        $role=Role::find($role_id);
+        return view('admin.role.edit',compact('role'));
     }
 
     /**
-     * 更新
+     * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -118,8 +129,8 @@ class UserController extends Controller
     {
         //
         $input=$request->all();
-        $user=\App\Model\User::find($id);
-        $res=$user->update(['username'=>$input['username']]);
+        $user=Role::find($id);
+        $res=$user->update(['role_name'=>$input['role_name']]);
 //    根据修改是否成功，跳转到对应的页面
         if ($res){
             $data=[
@@ -133,13 +144,10 @@ class UserController extends Controller
             ];
         }
         return $data;
-
-
-
     }
 
     /**
-     * 删除
+     * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -147,7 +155,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $user=\App\Model\User::find($id);
+
+        $user=Role::find($id);
         $res=$user->delete();
         if ($res){
             $data=[
@@ -161,26 +170,5 @@ class UserController extends Controller
             ];
         }
         return $data;
-
     }
-    public function delAll(Request $request){
-        $user=\App\Model\User::destroy($request->ids);
-        if ($user){
-            $data=[
-                'status'=>0,
-                'message'=>'删除成功'
-            ];
-        }else{
-            $data=[
-                'status'=>1,
-                'message'=>'删除失败'
-            ];
-        }
-        return $data;
-
-
-    }
-
-
-
 }
